@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#4CAF50">
+
+<title>Macro Bank</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">  
+
+<style>
+:root{
+  --bg:#121212;
+  --card:#1E1E1E;
+  --text:#E0E0E0;
+  --accent:#00FF7F;
+  --accent-light:#33FF99;
+  --danger:#FF4C4C;
+  --shadow:0 4px 12px rgba(0,0,0,0.5);
+}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:clamp(8px, 2vw, 16px);max-width:100%;box-sizing:border-box;}
+*, *::before, *::after { box-sizing: border-box; }
+h2,h3{margin:clamp(4px, 1vw, 8px) 0;}
+button{border:none;border-radius:clamp(8px, 2vw, 12px);cursor:pointer;font-size:clamp(12px, 2.5vw, 14px);transition:0.2s;}
+button:hover{opacity:0.85;}
+.week-weight{font-size:clamp(10px, 2vw, 12px);color:#aaa;}
+input,select{border-radius:clamp(6px, 1.5vw, 8px);border:1px solid #333;padding:clamp(6px, 1.5vw, 8px);font-size:clamp(14px, 2.5vw, 16px);width:100%;margin-top:clamp(4px, 1vw, 6px);background:#222;color:#E0E0E0;max-width:100%;box-sizing:border-box;}
+select{appearance:none;}
+.navigation{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.nav-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;}
+.page{display:none;}
+.page.active{display:block;}
+.card{background:var(--card);padding:clamp(8px, 2vw, 16px);margin-bottom:clamp(8px, 2vw, 16px);border-radius:clamp(12px, 3vw, 16px);box-shadow:var(--shadow);}
+.week-heading{font-size:clamp(16px, 4vw, 20px);margin-bottom:clamp(8px, 2vw, 12px);}
+.primary-btn{background:var(--accent);color:#121212;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 0.75vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 0.5vw, 3px);min-height:clamp(18px, 4vw, 22px);}
+.danger-btn{background:red;color:#fff;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 0.75vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 0.5vw, 3px);min-height:clamp(18px, 4vw, 22px);}
+.water-btn{background:#1E90FF;color:#fff;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 0.75vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 0.5vw, 3px);min-height:clamp(18px, 4vw, 22px);}
+.entry-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #333;}
+.entry-row span{flex:1;display:block;margin-bottom:4px;}
+.progress-container.weekly{background:#333;border-radius:clamp(8px, 2vw, 12px);height:clamp(10px, 2.5vw, 14px);overflow:hidden;margin:clamp(2px, 0.5vw, 4px) 0;}
+.progress-container.daily{background:#333;border-radius:clamp(6px, 1.5vw, 10px);width:100%;max-width:clamp(200px, 30vw, 300px);height:clamp(6px, 1.5vw, 8px);overflow:hidden;margin:clamp(2px, 0.5vw, 4px) 0;}
+.progress-bar{height:100%;width:0%;transition:0.3s;}
+.remaining{margin-top:clamp(2px, 0.5vw, 4px);font-size:clamp(12px, 2.5vw, 14px);color:var(--text);}
+.reset-btn{background:red;color:#121212;font-weight:600;height:clamp(18px, 4vw, 24px);font-size:clamp(12px, 2vw, 14px);}
+.current-week{border:2px solid var(--accent-light);}
+label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
+.week-total{margin-top:clamp(8px, 2vw, 12px); margin-bottom:clamp(6px, 1.5vw, 10px);font-weight:bold;}
+.water-group{margin-top:clamp(8px, 2vw, 12px);display:flex;gap:clamp(2px, 0.5vw, 4px);align-items:center;}
+.side-bars{display:flex;gap:clamp(12px, 3vw, 16px);margin-top:clamp(6px, 1.5vw, 8px); padding:0;}
+.bar-group{display:flex;flex-direction:column;align-items:center;}
+.side-label{font-size:clamp(12px, 2.5vw, 14px);margin-top:clamp(2px, 0.5vw, 4px);}
+.water-group input{flex:1;}
+.helper-text{font-size:clamp(10px, 2vw, 12px);color:#aaa;margin-top:clamp(4px, 1vw, 6px);}
+.per-day-goals{margin-top:clamp(6px, 1.5vw, 10px);}
+.per-day-goals summary{cursor:pointer;font-weight:bold;font-size:clamp(12px, 2.5vw, 14px);color:var(--accent);}
+.per-day-goals-row{display:flex;align-items:center;gap:clamp(6px, 1.5vw, 8px);margin-top:clamp(4px, 1vw, 6px);}
+.per-day-goals-row label{min-width:clamp(70px, 15vw, 90px);font-weight:normal;margin-top:0;font-size:clamp(11px, 2vw, 13px);}
+.per-day-goals-row input{flex:1;padding:clamp(4px, 1vw, 6px);font-size:clamp(11px, 2vw, 13px);}
+.per-day-goals-row .clear-day-goal-btn{background:#444;color:#ccc;font-size:clamp(9px, 1.5vw, 11px);padding:clamp(2px, 0.5vw, 3px) clamp(3px, 0.75vw, 5px);white-space:nowrap;min-height:clamp(16px, 3.5vw, 18px);}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  body { padding: 8px; }
+  .card { padding: 12px; margin-bottom: 12px; }
+  .progress-container.daily { width: 100%; max-width: 300px; }
+  .side-bars { flex-direction: row; gap: 8px; align-items: stretch; padding: 0px; }
+  .bar-group { flex-direction: row; justify-content: space-between; align-items: center; }
+  .bar-group .progress-container.daily { width: 35%; max-width: 120px; }
+  .side-label { margin-top: 0; margin-left: 8px; font-size: 10px; white-space: nowrap; }
+  .entry-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .per-day-goals-row { flex-direction: column; align-items: stretch; gap: 4px; }
+  .per-day-goals-row label { min-width: auto; margin-bottom: 4px; }
+  .water-group { flex-direction: column; gap: 8px; }
+  h2, h3 { font-size: 8px; }
+  .week-heading { font-size: 3px; }
+  .remaining { font-size: 12px; }
+  .side-label { font-size: 10px; }
+  .helper-text { font-size: 10px; }
+  .per-day-goals summary { font-size: 12px; }
+  .per-day-goals-row label { font-size: 11px; }
+  .per-day-goals-row input { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .card { padding: 8px; }
+  .week-heading { font-size: 12px; }
+  h2 { font-size: 15px; }
+  h3 { font-size: 12px; }
+  .bar-group { flex-direction: column; align-items: stretch; }
+  .bar-group .progress-container.daily { width: 100%; }
+  .side-label { text-align: center; margin-top: 4px; font-size: 9px; }
+  .primary-btn, .danger-btn, .water-btn { font-size: clamp(9px, 1.8vw, 11px); padding: clamp(2px, 0.5vw, 3px) clamp(3px, 0.75vw, 4px); min-height: clamp(16px, 3.5vw, 20px); }
+  .remaining { font-size: 10px; }
+  .helper-text { font-size: 9px; }
+  .per-day-goals summary { font-size: 10px; }
+  .per-day-goals-row label { font-size: 9px; }
+  .per-day-goals-row input { font-size: 9px; }
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+  <h2>Macro Bank</h2>
+  <div class="navigation">
+    <a href="#setGoals" class="primary-btn nav-link">Goals</a>
+    <a href="#dailyMacros" class="primary-btn nav-link">Daily Macros</a>
+    <a href="#week" class="primary-btn nav-link">Current Week Log</a>
+    <a href="#previousWeeks" class="primary-btn nav-link">Previous Weeks</a>
+  </div>
+</div>
+
+<div class="card" id="sharedProgress">
+  <h3>Weekly Progress</h3>
+  <div class="progress-container weekly">
+    <div id="weeklyProgress" class="progress-bar"></div>
+  </div>
+  <div id="weeklyRemaining" class="remaining"></div>
+</div>
+
+<section class="page active" id="week">
+  <div id="currentWeekContainer"></div>
+  <button id="resetBtn" class="reset-btn">Reset Week Data</button>
+</section>
+
+<section class="page" id="previousWeeks">
+  <div class="card">
+    <h3>Previous Weeks Log</h3>
+    <button id="toggleHistoryBtn" class="primary-btn" style="margin-bottom:12px;">Show previous weeks</button>
+    <div id="previousWeeksContainer"></div>
+  </div>
+</section>
+
+<section class="page" id="setGoals">
+  <div class="card">
+    <h3>Set Your Goals</h3>
+    <label>Daily Calorie Goal:</label>
+    <input type="number" id="dailyCalInput" placeholder="e.g., 1650">
+    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+      <input type="checkbox" id="autoAdjustCalToggle" style="width:auto;margin-top:0;">
+      Auto-adjust remaining daily calories
+    </label>
+    <div class="helper-text" id="autoAdjustHelperText"></div>
+
+    <details class="per-day-goals" id="perDayGoalsDetails">
+      <summary>Customize calorie goal per day</summary>
+      <div id="perDayGoalsContainer"></div>
+    </details>
+
+    <label>Daily Protein Goal:</label>
+    <input type="number" id="dailyProteinInput" placeholder="e.g., 140">
+
+    <label>Daily Water Goal (oz):</label>
+    <input type="number" id="dailyWaterInput" placeholder="e.g., 64">
+
+    <label>Week Starting Weight (lbs):</label>
+    <input type="number" id="weekStartWeight" placeholder="e.g., 180">
+  </div>
+</section>
+
+<section class="page" id="dailyMacros">
+  <div class="card">
+    <h3>Daily Macros</h3>
+    <label>Day:</label>
+    <select id="day"></select>
+    <input type="number" id="dailyCalories" placeholder="Calories (kcal)">
+    <input type="number" id="protein" placeholder="Protein (g)">
+    <input type="number" id="carbs" placeholder="Carbs (g)">
+    <input type="number" id="fat" placeholder="Fat (g)">
+    <button id="saveDayBtn" class="primary-btn">Save Day</button>
+    <button id="clearEntryBtn" class="danger-btn">Clear</button>
+
+    <!-- Water input -->
+    <div class="water-group">
+      <label>Water (oz):</label>
+      <input type="number" id="waterAmount" placeholder="oz">
+      <button id="addWaterBtn" class="water-btn">Add Water</button>
+      <button id="clearDayWaterBtn" class="danger-btn">Empty Water</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+// order in which days are shown in UI; bottom‑to‑top sequence
+// bottom element will be Sunday, then Monday, ... up to Saturday at top
+const displayDayOrder = [6,5,4,3,2,1,0];
+
+// Default Goals
+let personalDailyCalGoal = parseInt(localStorage.getItem("personalDailyCalGoal")) || 1650;
+let personalDailyProteinGoal = parseInt(localStorage.getItem("personalDailyProteinGoal")) || 120;
+let personalDailyWaterGoal = parseFloat(localStorage.getItem("personalDailyWaterGoal")) || 64; // oz
+let autoAdjustCalorieBudget = JSON.parse(localStorage.getItem("autoAdjustCalorieBudget") ?? "true");
+let perDayCalGoals = JSON.parse(localStorage.getItem("perDayCalGoals")) || {};
+// if a previous value was stored in ml (large number), convert to oz
+if(personalDailyWaterGoal > 1000){
+  const ML_PER_OZ = 29.5735;
+  personalDailyWaterGoal = personalDailyWaterGoal / ML_PER_OZ;
+  localStorage.setItem("personalDailyWaterGoal", personalDailyWaterGoal);
+}
+
+// Returns the effective calorie goal for a given day index (0=Sun … 6=Sat).
+// Uses a per-day override if set, otherwise falls back to the global daily goal.
+function getEffectiveDailyCalGoal(dayIdx){
+  const override = perDayCalGoals[dayIdx];
+  return (override !== undefined && Number(override) > 0) ? Number(override) : (Number(personalDailyCalGoal) || 0);
+}
+
+// Sum of all 7 days' effective calorie goals.
+function getWeeklyCalTarget(){
+  let total = 0;
+  for(let i=0;i<7;i++) total += getEffectiveDailyCalGoal(i);
+  return total;
+}
+
+function getWeekKey(){
+  const now = new Date();
+  const firstJan = new Date(now.getFullYear(),0,1);
+  const pastDays = Math.floor((now-firstJan)/86400000);
+  const weekNumber = Math.ceil((pastDays + firstJan.getDay()+1)/7);
+  return now.getFullYear() + "-W" + weekNumber;
+}
+
+let allWeeks = JSON.parse(localStorage.getItem("allWeeks")) || {};
+let currentWeekKey = getWeekKey();
+
+// Whether to show each previous week as its own card (true), or consolidate them into one summary card (false)
+let showPreviousWeeks = JSON.parse(localStorage.getItem("showPreviousWeeks")) || false;
+
+function updateHistoryToggleBtn(){
+  const btn = document.getElementById("toggleHistoryBtn");
+  if(!btn) return;
+  btn.textContent = showPreviousWeeks ? "Collapse all previous weeks" : "Expand all previous weeks";
+}
+
+function getDayTotals(day){
+  if(!day) return {cal:0,p:0,c:0,f:0};
+  if(day.totals){
+    return {
+      cal: Number(day.totals.cal) || 0,
+      p: Number(day.totals.p) || 0,
+      c: Number(day.totals.c) || 0,
+      f: Number(day.totals.f) || 0,
+    };
+  }
+  if(Array.isArray(day.entries)){
+    return day.entries.reduce((sum, entry) => {
+      sum.cal += Number(entry.cal) || 0;
+      sum.p += Number(entry.p) || 0;
+      sum.c += Number(entry.c) || 0;
+      sum.f += Number(entry.f) || 0;
+      return sum;
+    }, {cal:0,p:0,c:0,f:0});
+  }
+  return {cal:0,p:0,c:0,f:0};
+}
+
+function normalizeWeekData(week){
+  if(!week || !Array.isArray(week.entries)) return;
+  week.entries = week.entries.map(day => {
+    const totals = getDayTotals(day);
+    return {totals, water: Number(day.water) || 0};
+  });
+}
+
+if(!allWeeks[currentWeekKey]){
+  allWeeks[currentWeekKey] = {
+    entries: dayNames.map(()=>({totals:{cal:0,p:0,c:0,f:0}, water:0 })),
+    startingWeight: null,
+  };
+}
+Object.values(allWeeks).forEach(normalizeWeekData);
+let data = allWeeks[currentWeekKey].entries;
+
+// Populate day dropdown
+function populateDays(){
+  const daySelect = document.getElementById("day");
+  daySelect.innerHTML = "";
+  // populate using reversed display order (Saturday first, Sunday last)
+  displayDayOrder.forEach(i=>{
+    daySelect.innerHTML += `<option value="${i}">${dayNames[i]}</option>`;
+  });
+}
+populateDays();
+
+function save(){
+  allWeeks[currentWeekKey].entries = data;
+  localStorage.setItem("allWeeks", JSON.stringify(allWeeks));
+  localStorage.setItem("personalDailyCalGoal", personalDailyCalGoal);
+  localStorage.setItem("personalDailyProteinGoal", personalDailyProteinGoal);
+  localStorage.setItem("personalDailyWaterGoal", personalDailyWaterGoal);
+  localStorage.setItem("autoAdjustCalorieBudget", JSON.stringify(autoAdjustCalorieBudget));
+  localStorage.setItem("perDayCalGoals", JSON.stringify(perDayCalGoals));
+  renderWeekHistory();
+}
+
+function clearEntryInputs(){
+  document.getElementById("dailyCalories").value="";
+  document.getElementById("protein").value="";
+  document.getElementById("carbs").value="";
+  document.getElementById("fat").value="";
+  document.getElementById("waterAmount").value="";
+}
+
+function updateAutoAdjustHelperText(){
+  const helper = document.getElementById("autoAdjustHelperText");
+  if(!helper) return;
+  helper.textContent = autoAdjustCalorieBudget
+    ? "Auto-adjust is on: after each logged day, remaining weekly calories are split evenly across the remaining days."
+    : "Auto-adjust is off: each day uses your fixed daily calorie goal.";
+}
+
+function getAutoAdjustedCalorieGoals(weekData, weeklyTarget){
+  const adjustedGoals = dayNames.map((_,i) => getEffectiveDailyCalGoal(i));
+
+  if (!Array.isArray(weekData) || weekData.length !== 7 || weeklyTarget <= 0) {
+    return adjustedGoals;
+  }
+
+  const dayCalories = weekData.map(day => {
+    if (!day) return 0;
+    return getDayTotals(day).cal;
+  });
+
+  const loggedDays = dayCalories
+    .map((calories, idx) => ({ calories, idx }))
+    .filter(item => item.calories > 0)
+    .map(item => item.idx);
+
+  if (!loggedDays.length) {
+    return adjustedGoals;
+  }
+
+  const latestLoggedDay = Math.max(...loggedDays);
+  const remainingDays = 6 - latestLoggedDay;
+
+  if (remainingDays <= 0) {
+    return adjustedGoals;
+  }
+
+  const consumedSoFar = dayCalories
+    .slice(0, latestLoggedDay + 1)
+    .reduce((sum, calories) => sum + calories, 0);
+
+  const remainingWeeklyCalories = Math.max(weeklyTarget - consumedSoFar, 0);
+  const evenRemainingGoal = remainingWeeklyCalories / remainingDays;
+
+  for (let i = latestLoggedDay + 1; i < 7; i++) {
+    adjustedGoals[i] = evenRemainingGoal;
+  }
+
+  return adjustedGoals;
+}
+
+// Daily Protein Goal
+const protInput = document.getElementById("dailyProteinInput");
+protInput.value = personalDailyProteinGoal;
+protInput.addEventListener("change", () => {
+  const val = parseInt(protInput.value);
+  if(val > 0) {
+    personalDailyProteinGoal = val;
+    localStorage.setItem("personalDailyProteinGoal", personalDailyProteinGoal);
+    renderWeekHistory();
+  }
+});
+
+const waterInput = document.getElementById("dailyWaterInput");
+waterInput.value = personalDailyWaterGoal;
+waterInput.addEventListener("change", () => {
+  const val = parseFloat(waterInput.value);
+  if(val > 0) {
+    personalDailyWaterGoal = val;
+    localStorage.setItem("personalDailyWaterGoal", personalDailyWaterGoal);
+    renderWeekHistory();
+  }
+});
+
+const weekWeightInput = document.getElementById("weekStartWeight");
+weekWeightInput.value = allWeeks[currentWeekKey].startingWeight || "";
+weekWeightInput.addEventListener("change", () => {
+  const val = parseFloat(weekWeightInput.value);
+  allWeeks[currentWeekKey].startingWeight = val > 0 ? val : null;
+  save();
+});
+
+// Daily Calorie Goal
+const dailyCalInput = document.getElementById("dailyCalInput");
+dailyCalInput.value = personalDailyCalGoal;
+
+const autoAdjustToggle = document.getElementById("autoAdjustCalToggle");
+autoAdjustToggle.checked = autoAdjustCalorieBudget;
+updateAutoAdjustHelperText();
+
+autoAdjustToggle.addEventListener("change", () => {
+  autoAdjustCalorieBudget = autoAdjustToggle.checked;
+  localStorage.setItem("autoAdjustCalorieBudget", JSON.stringify(autoAdjustCalorieBudget));
+  updateAutoAdjustHelperText();
+  renderWeekHistory();
+});
+
+dailyCalInput.addEventListener("change", () => {
+  const val = parseInt(dailyCalInput.value);
+  if(val > 0) {
+    personalDailyCalGoal = val;
+    localStorage.setItem("personalDailyCalGoal", personalDailyCalGoal);
+    // refresh per-day inputs so placeholder shows the new default
+    renderPerDayGoalInputs();
+    renderWeekHistory();
+  }
+});
+
+function renderPerDayGoalInputs(){
+  const container = document.getElementById("perDayGoalsContainer");
+  if(!container) return;
+  container.innerHTML = "";
+  // Show days in display order (Saturday first, Sunday last) to match the week cards
+  displayDayOrder.forEach(dayIdx => {
+    const row = document.createElement("div");
+    row.className = "per-day-goals-row";
+    const currentVal = perDayCalGoals[dayIdx];
+    row.innerHTML = `
+      <label>${dayNames[dayIdx]}:</label>
+      <input type="number" placeholder="${Number(personalDailyCalGoal)||1650} (default)" value="${currentVal !== undefined ? currentVal : ''}" data-day="${dayIdx}">
+      <button class="clear-day-goal-btn" data-day="${dayIdx}">Reset</button>`;
+    container.appendChild(row);
+  });
+  container.querySelectorAll("input[data-day]").forEach(input => {
+    input.addEventListener("change", () => {
+      const dayIdx = parseInt(input.dataset.day);
+      const val = parseInt(input.value);
+      if(val > 0){
+        perDayCalGoals[dayIdx] = val;
+      } else {
+        delete perDayCalGoals[dayIdx];
+        input.value = "";
+      }
+      localStorage.setItem("perDayCalGoals", JSON.stringify(perDayCalGoals));
+      renderWeekHistory();
+    });
+  });
+  container.querySelectorAll(".clear-day-goal-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const dayIdx = parseInt(btn.dataset.day);
+      delete perDayCalGoals[dayIdx];
+      localStorage.setItem("perDayCalGoals", JSON.stringify(perDayCalGoals));
+      renderPerDayGoalInputs();
+      renderWeekHistory();
+    });
+  });
+}
+renderPerDayGoalInputs();
+
+function clearEntryInputs(){
+  document.getElementById("dailyCalories").value = "";
+  document.getElementById("protein").value = "";
+  document.getElementById("carbs").value = "";
+  document.getElementById("fat").value = "";
+  document.getElementById("waterAmount").value = "";
+}
+
+function populateDayInputs(){
+  const day = +document.getElementById("day").value;
+  const totals = getDayTotals(data[day]);
+  document.getElementById("dailyCalories").value = totals.cal || "";
+  document.getElementById("protein").value = totals.p || "";
+  document.getElementById("carbs").value = totals.c || "";
+  document.getElementById("fat").value = totals.f || "";
+}
+
+document.getElementById("day").addEventListener("change", populateDayInputs);
+populateDayInputs();
+
+function saveDayTotals(){
+  const day = +document.getElementById("day").value;
+  const cal = +document.getElementById("dailyCalories").value || 0;
+  const p = +document.getElementById("protein").value || 0;
+  const c = +document.getElementById("carbs").value || 0;
+  const f = +document.getElementById("fat").value || 0;
+  data[day].totals = {cal,p,c,f};
+  save();
+  populateDayInputs();
+}
+
+document.getElementById("saveDayBtn").addEventListener("click", saveDayTotals);
+document.getElementById("clearEntryBtn").addEventListener("click", clearEntryInputs);
+
+function addWater(){
+  const day = +document.getElementById("day").value;
+  const wOz = +document.getElementById("waterAmount").value||0;
+  if(wOz <= 0) return;
+  const ML_PER_OZ = 29.5735;
+  data[day].water = (data[day].water||0) + wOz * ML_PER_OZ;
+  document.getElementById("waterAmount").value = "";
+  save();
+}
+
+document.getElementById("addWaterBtn").addEventListener("click", addWater);
+
+document.getElementById("clearDayWaterBtn").addEventListener("click", () => {
+  const day = +document.getElementById("day").value;
+  if(confirm("Reset water intake for this day?")){
+    data[day].water = 0;
+    save();
+  }
+});
+
+// Reset Button
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  if(confirm("Clear all weekly macro data for the current week?")){
+    data = dayNames.map(()=>({totals:{cal:0,p:0,c:0,f:0}, water:0}));
+    save();
+  }
+});
+
+// Render Week History
+function renderWeekHistory(){
+  const currentWeekContainer = document.getElementById("currentWeekContainer");
+  const previousWeeksContainer = document.getElementById("previousWeeksContainer");
+  if(currentWeekContainer) currentWeekContainer.innerHTML = "";
+  if(previousWeeksContainer) previousWeeksContainer.innerHTML = "";
+
+  // Ensure the current week card is always rendered at the top
+  const weekKeys = Object.keys(allWeeks).sort();
+  // newest previous weeks first so the oldest previous week renders last (at bottom)
+  const otherWeeks = weekKeys.filter(k=>k!==currentWeekKey).sort().reverse();
+  const orderedWeekKeys = [currentWeekKey, ...otherWeeks];
+  const totalOtherWeeks = otherWeeks.length;
+
+  orderedWeekKeys.forEach((weekKey,index)=>{
+    const weekData = allWeeks[weekKey].entries;
+    const card = document.createElement("div");
+    card.className = "card";
+    const isCurrent = weekKey === currentWeekKey;
+    if(isCurrent) card.classList.add("current-week");
+    const weeklyTarget = getWeeklyCalTarget();
+    const adjustedCalorieGoals = (isCurrent && autoAdjustCalorieBudget)
+      ? getAutoAdjustedCalorieGoals(weekData, weeklyTarget)
+      : Array(7).fill(Number(personalDailyCalGoal) || 0);
+
+    const isCollapsed = !isCurrent && !showPreviousWeeks;
+
+    let totalWeekCalories=0;
+    let totalWeekProtein=0;
+    // determine heading label: current week gets a special label; for previous weeks
+    // Week 1 = the oldest week (rendered last / at the bottom of the list),
+    // Week N = the most recent previous week (rendered just below the current week).
+    let weekLabel;
+    if(isCurrent) {
+      weekLabel = "Current Week";
+    } else {
+      // index is 1-based position among other weeks (1 = newest, N = oldest).
+      // Reverse so oldest gets label "Week 1".
+      weekLabel = `Week ${totalOtherWeeks - index + 1}`;
+    }
+
+    const startingWeight = allWeeks[weekKey].startingWeight;
+    const weightLabel = startingWeight ? ` (Start: ${startingWeight} lbs)` : "";
+    // use display order when rendering days (Saturday at top, Sunday at bottom)
+    let html = displayDayOrder.map(dayIdx=>{
+      const dayData = weekData[dayIdx];
+      const totals = getDayTotals(dayData);
+      const dayTotal = Math.round(totals.cal);
+      const proteinTotal = Math.round(totals.p);
+      const carbsTotal = Math.round(totals.c);
+      const fatTotal = Math.round(totals.f);
+      dayData.water = dayData.water||0;
+      totalWeekCalories += dayTotal;
+      totalWeekProtein += proteinTotal;
+
+      const dailyProtGoal = personalDailyProteinGoal;
+      const dailyWaterGoal = personalDailyWaterGoal;
+      const dailyCalGoal = Math.max(adjustedCalorieGoals[dayIdx] || 0, 0);
+      // calories progress
+      let calPercent = dailyCalGoal > 0 ? Math.min((dayTotal / dailyCalGoal) * 100, 150) : 0;
+      let calColor = calPercent < 90 ? "#00FF7F" : calPercent <= 100 ? "#FFD700" : "#FF4C4C";
+
+      let percent = dailyProtGoal > 0 ? (proteinTotal/dailyProtGoal)*100 : 0;
+      percent = Math.min(percent,150);
+      let barColor = percent < 90 ? "#00FF7F" : percent <= 100 ? "#FFD700" : "#FF4C4C";
+
+      const ML_PER_OZ = 29.5735;
+      const waterOz = dayData.water? (dayData.water/ML_PER_OZ) : 0;
+      let waterPercent = dailyWaterGoal>0 ? Math.min((waterOz/dailyWaterGoal)*100,100) : 0;
+      let waterColor = waterPercent < 80 ? "#00BFFF" : waterPercent < 100 ? "#1E90FF" : "#0000CD";
+      return `<div class="day-card">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <strong>${dayNames[dayIdx]} — ${dayTotal} kcal</strong>
+          <button class="primary-btn toggle-day-btn" style="margin-left:8px;">Hide</button>
+        </div>
+        <div class="day-progress">
+          <div class="side-bars">
+            <div class="bar-group">
+              <div class="progress-container daily">
+                <div class="progress-bar" style="width:${calPercent}%; background:${calColor};"></div>
+              </div>
+              <div class="side-label">Calories: ${dayTotal}/${Math.round(dailyCalGoal)} kcal</div>
+            </div>
+            <div class="bar-group">
+              <div class="progress-container daily">
+                <div class="progress-bar" style="width:${percent}%; background:${barColor};"></div>
+              </div>
+              <div class="side-label">Protein: ${proteinTotal}/${dailyProtGoal} g</div>
+            </div>
+            <div class="bar-group">
+              <div class="progress-container daily">
+                <div class="progress-bar" style="width:${waterPercent}%; background:${waterColor};"></div>
+              </div>
+              <div class="side-label">Water: ${Math.round(waterOz)}/${dailyWaterGoal} oz</div>
+            </div>
+          </div>
+          <br>
+          <div class="day-entries" style="display:block;">
+            <div class="entry-row"><span>Protein: ${proteinTotal} g | Carbs: ${carbsTotal} g | Fat: ${fatTotal} g</span></div>
+            <div class="entry-row"><span>Water: ${Math.round(waterOz)} oz</span></div>
+          </div>
+        </div>
+      </div>`;
+    }).join("<hr>");
+    // calculate week progress for this card
+    let weekPercent = 0;
+    if (weeklyTarget > 0) {
+      weekPercent = Math.min((totalWeekCalories / weeklyTarget) * 100, 100);
+    }
+    let weekBarColor = "#00FF7F";
+    if (weekPercent >= 80 && weekPercent < 100) {
+      weekBarColor = "#FFD700";
+    } else if (weekPercent >= 100) {
+      weekBarColor = "#FF4C4C";
+    }
+    const weekRemainingText = (() => {
+      if (weeklyTarget <= 0) return "Set a daily calorie goal";
+      const difference = Math.round(weeklyTarget - totalWeekCalories);
+      return difference >= 0
+        ? `Calories Remaining: ${difference} kcal`
+        : `Calories Over: ${Math.abs(difference)} kcal`;
+    })();
+
+    const weekProgressHTML = `<div class="progress-container weekly">
+        <div class="progress-bar" style="width:${weekPercent}%; background:${weekBarColor};"></div>
+      </div>
+      <div class="remaining">${weekRemainingText}</div>`;
+
+    const weightHTML = startingWeight ? `<span class="week-weight">Weigh In: ${startingWeight} lbs</span>` : "";
+
+    const toggleBtnHTML = !isCurrent
+      ? `<button class="primary-btn toggle-week-btn" style="margin-left:8px;">${isCollapsed ? "Show" : "Hide"}</button>`
+      : "";
+
+    const toggleAllDaysHTML = `<button class="primary-btn toggle-all-days-btn" style="margin-left:8px;">Hide All</button>`;
+
+    card.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <strong class="week-heading">${weekLabel}</strong>
+        <div style="display:flex; align-items:center; gap:8px;">
+          ${weightHTML}
+          ${toggleBtnHTML}
+          ${toggleAllDaysHTML}
+        </div>
+      </div>
+      ${weekProgressHTML}
+      <div class="week-details" style="display:${isCollapsed ? "none" : "block"};">
+        <div class="total">
+          <div class="week-total">Total Calories: ${Math.round(totalWeekCalories)}</div>
+          <div>${html}</div>
+        </div>
+      </div>
+    `;
+    if(isCurrent){
+      currentWeekContainer.appendChild(card);
+    } else if(previousWeeksContainer){
+      previousWeeksContainer.appendChild(card);
+    }
+
+    // allow toggling previous week details
+    if (!isCurrent) {
+      const toggleBtn = card.querySelector(".toggle-week-btn");
+      const details = card.querySelector(".week-details");
+      if (toggleBtn && details) {
+        toggleBtn.addEventListener("click", () => {
+          const hidden = details.style.display === "none";
+          details.style.display = hidden ? "block" : "none";
+          toggleBtn.textContent = hidden ? "Hide" : "Show";
+        });
+      }
+    }
+
+    // allow toggling each day independently
+    const dayToggles = card.querySelectorAll(".toggle-day-btn");
+    dayToggles.forEach(btn => {
+      const entries = btn.closest(".day-card")?.querySelector(".day-entries");
+      if (!entries) return;
+      btn.addEventListener("click", () => {
+        const hidden = entries.style.display === "none";
+        entries.style.display = hidden ? "block" : "none";
+        btn.textContent = hidden ? "Hide" : "Show";
+      });
+    });
+
+    // allow hiding/showing all days at once
+    const toggleAllDaysBtn = card.querySelector(".toggle-all-days-btn");
+    if (toggleAllDaysBtn) {
+      toggleAllDaysBtn.addEventListener("click", () => {
+        const dayEntries = card.querySelectorAll(".day-entries");
+        if (!dayEntries.length) return;
+        const isHidden = dayEntries[0].style.display === "none";
+        dayEntries.forEach(d => {
+          d.style.display = isHidden ? "block" : "none";
+        });
+        toggleAllDaysBtn.textContent = isHidden ? "Hide All" : "Show All";
+      });
+    }
+
+    // Weekly Calories Progress
+    const progressEl=document.getElementById("weeklyProgress");
+    const remainingEl=document.getElementById("weeklyRemaining");
+    if (weekKey === currentWeekKey) {
+      const weeklyTarget = getWeeklyCalTarget();
+
+      let percent = 0;
+      if (weeklyTarget > 0) {
+        percent = Math.min((totalWeekCalories / weeklyTarget) * 100, 100);
+      }
+
+      // Progress Bar Colors
+      let barColor = "#00FF7F"; // green default
+
+      if (percent >= 80 && percent < 100) {
+        barColor = "#FFD700"; // yellow when almost full
+      } else if (percent >= 100) {
+        barColor = "#FF4C4C"; // red when goal reached or exceeded
+      }
+
+      progressEl.style.width = percent + "%";
+      progressEl.style.background = barColor;
+
+      if (weeklyTarget > 0) {
+        const difference = Math.round(weeklyTarget - totalWeekCalories);
+        remainingEl.textContent = difference >= 0
+          ? `Calories Remaining: ${difference} kcal`
+          : `Calories Over: ${Math.abs(difference)} kcal`;
+      } else {
+        remainingEl.textContent = "Set a daily calorie goal";
+      }
+    }
+  });
+
+  if(previousWeeksContainer && previousWeeksContainer.innerHTML.trim() === ""){
+    previousWeeksContainer.innerHTML = `<div class="card"><p style="margin:0;color:#aaa;">No previous weeks available yet.</p></div>`;
+  }
+}
+    // Deselect Input on Enter 
+const inputs = document.querySelectorAll('input');
+
+inputs.forEach(input => {
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // prevent form submission if any
+      input.blur();      // remove focus from the input
+    }
+  });
+});
+
+// Wire up the previous weeks toggle button
+updateHistoryToggleBtn();
+document.getElementById("toggleHistoryBtn").addEventListener("click", () => {
+  showPreviousWeeks = !showPreviousWeeks;
+  localStorage.setItem("showPreviousWeeks", JSON.stringify(showPreviousWeeks));
+  updateHistoryToggleBtn();
+  renderWeekHistory();
+});
+
+function showPageFromHash(){
+  const pages = document.querySelectorAll('.page');
+  const validPages = ['week', 'previousWeeks', 'setGoals', 'dailyMacros'];
+  let pageId = window.location.hash.replace('#','') || 'week';
+  if(!validPages.includes(pageId)) pageId = 'week';
+  pages.forEach(page => page.classList.toggle('active', page.id === pageId));
+  const target = document.getElementById(pageId);
+  if(target){
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+window.addEventListener('hashchange', showPageFromHash);
+showPageFromHash();
+renderWeekHistory();
+</script>
+</body>
+</html>
