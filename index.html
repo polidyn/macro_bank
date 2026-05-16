@@ -21,12 +21,15 @@
   --accent:#00FF7F;
   --accent-light:#33FF99;
   --danger:#FF4C4C;
+  --tab-bg:#00FF7F;
+  --tab-text:#121212;
+  --tab-active:#33FF99;
   --shadow:0 4px 12px rgba(0,0,0,0.5);
 }
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:clamp(8px, 2vw, 16px);max-width:100%;box-sizing:border-box;}
 *, *::before, *::after { box-sizing: border-box; }
 h2,h3{margin:clamp(4px, 1vw, 8px) 0;}
-button{border:none;border-radius:clamp(8px, 2vw, 12px);cursor:pointer;font-size:clamp(12px, 2.5vw, 14px);transition:0.2s;}
+button{border:none;border-radius:clamp(8px, 3px, 12px);cursor:pointer;font-size:clamp(12px, 2.5vw, 14px);transition:0.2s;}
 button:hover{opacity:0.85;}
 .week-weight{font-size:clamp(10px, 2vw, 12px);color:#aaa;}
 input,select{border-radius:clamp(6px, 1.5vw, 8px);border:1px solid #333;padding:clamp(6px, 1.5vw, 8px);font-size:clamp(14px, 2.5vw, 16px);width:100%;margin-top:clamp(4px, 1vw, 6px);background:#222;color:#E0E0E0;max-width:100%;box-sizing:border-box;}
@@ -37,17 +40,20 @@ select{appearance:none;}
 .page.active{display:block;}
 .card{background:var(--card);padding:clamp(8px, 2vw, 16px);margin-bottom:clamp(8px, 2vw, 16px);border-radius:clamp(12px, 3vw, 16px);box-shadow:var(--shadow);}
 .week-heading{font-size:clamp(16px, 4vw, 20px);margin-bottom:clamp(8px, 2vw, 12px);}
-.primary-btn{background:var(--accent);color:#121212;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 0.75vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 0.5vw, 3px);min-height:clamp(18px, 4vw, 22px);}
-.danger-btn{background:red;color:#fff;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 0.75vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 0.5vw, 3px);min-height:clamp(18px, 4vw, 22px);}
-.water-btn{background:#1E90FF;color:#fff;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 0.75vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 0.5vw, 3px);min-height:clamp(18px, 4vw, 22px);}
+.primary-btn{background:var(--tab-bg);color:var(--tab-text);font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 1vw, 4px)clamp(4px, 1vw, 6px);margin-top:clamp(2px, 10px, 3px);min-height:clamp(18px, 4vw, 22px);}
+.primary-btn.nav-link{background:var(--tab-bg);color:var(--tab-text);border-radius:clamp(8px, 3px, 12px);}
+.primary-btn.nav-link:hover{background:var(--tab-active);color:var(--tab-text);border-radius:clamp(8px, 3px, 12px);}
+.primary-btn.nav-link.active{background:var(--tab-active);color:var(--tab-text);font-weight:500;box-shadow:0 0 0 2px rgba(255,255,255,0.15);border-radius:clamp(8px, 3px, 12px);}
+.danger-btn{background:rgb(178, 25, 25);color:#fff;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 1vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 10px, 3px);min-height:clamp(18px, 4vw, 22px);}
+.water-btn{background:#3874b0;color:#fff;font-size:clamp(10px, 2vw, 12px);padding:clamp(3px, 0.75vw, 4px) clamp(4px, 1vw, 6px);margin-top:clamp(2px, 0.5vw, 3px);min-height:clamp(18px, 4vw, 22px);}
 .entry-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #333;}
 .entry-row span{flex:1;display:block;margin-bottom:4px;}
 .progress-container.weekly{background:#333;border-radius:clamp(8px, 2vw, 12px);height:clamp(10px, 2.5vw, 14px);overflow:hidden;margin:clamp(2px, 0.5vw, 4px) 0;}
 .progress-container.daily{background:#333;border-radius:clamp(6px, 1.5vw, 10px);width:100%;max-width:clamp(200px, 30vw, 300px);height:clamp(6px, 1.5vw, 8px);overflow:hidden;margin:clamp(2px, 0.5vw, 4px) 0;}
 .progress-bar{height:100%;width:0%;transition:0.3s;}
 .remaining{margin-top:clamp(2px, 0.5vw, 4px);font-size:clamp(12px, 2.5vw, 14px);color:var(--text);}
-.reset-btn{background:red;color:#121212;font-weight:600;height:clamp(18px, 4vw, 24px);font-size:clamp(12px, 2vw, 14px);}
-.current-week{border:2px solid var(--accent-light);}
+.reset-btn{background:rgb(205, 42, 42);color:#121212;font-weight:600;height:clamp(18px, 4vw, 24px);font-size:clamp(12px, 2vw, 14px);}
+.current-week{border:2px solid var(--tab-bg);}
 label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
 .week-total{margin-top:clamp(8px, 2vw, 12px); margin-bottom:clamp(6px, 1.5vw, 10px);font-weight:bold;}
 .water-group{margin-top:clamp(8px, 2vw, 12px);display:flex;gap:clamp(2px, 0.5vw, 4px);align-items:center;}
@@ -57,7 +63,9 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
 .water-group input{flex:1;}
 .helper-text{font-size:clamp(10px, 2vw, 12px);color:#aaa;margin-top:clamp(4px, 1vw, 6px);}
 .per-day-goals{margin-top:clamp(6px, 1.5vw, 10px);}
-.per-day-goals summary{cursor:pointer;font-weight:bold;font-size:clamp(12px, 2.5vw, 14px);color:var(--accent);}
+.per-day-goals summary{cursor:pointer;font-weight:bold;font-size:clamp(12px, 2.5vw, 14px);color:var(--tab-bg);background:none;padding:0;border:none;display:inline-flex;align-items:center;}
+.per-day-goals summary::before{content:'▶';display:inline-block;margin-right:8px;transition:transform 0.2s ease;color:var(--tab-bg);}
+.per-day-goals[open] summary::before{content:'▼';}
 .per-day-goals-row{display:flex;align-items:center;gap:clamp(6px, 1.5vw, 8px);margin-top:clamp(4px, 1vw, 6px);}
 .per-day-goals-row label{min-width:clamp(70px, 15vw, 90px);font-weight:normal;margin-top:0;font-size:clamp(11px, 2vw, 13px);}
 .per-day-goals-row input{flex:1;padding:clamp(4px, 1vw, 6px);font-size:clamp(11px, 2vw, 13px);}
@@ -112,15 +120,8 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
     <a href="#dailyMacros" class="primary-btn nav-link">Daily Macros</a>
     <a href="#week" class="primary-btn nav-link">Current Week Log</a>
     <a href="#previousWeeks" class="primary-btn nav-link">Previous Weeks</a>
+    <a href="#theme" class="primary-btn nav-link">Settings</a>
   </div>
-</div>
-
-<div class="card" id="sharedProgress">
-  <h3>Weekly Progress</h3>
-  <div class="progress-container weekly">
-    <div id="weeklyProgress" class="progress-bar"></div>
-  </div>
-  <div id="weeklyRemaining" class="remaining"></div>
 </div>
 
 <section class="page active" id="week">
@@ -137,6 +138,13 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
 </section>
 
 <section class="page" id="setGoals">
+  <div class="card" id="sharedProgress">
+    <h3>Weekly Progress</h3>
+    <div class="progress-container weekly">
+      <div id="weeklyProgress" class="progress-bar"></div>
+    </div>
+    <div id="weeklyRemaining" class="remaining"></div>
+  </div>
   <div class="card">
     <h3>Set Your Goals</h3>
     <label>Daily Calorie Goal:</label>
@@ -148,7 +156,7 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
     <div class="helper-text" id="autoAdjustHelperText"></div>
 
     <details class="per-day-goals" id="perDayGoalsDetails">
-      <summary>Customize calorie goal per day</summary>
+      <summary>Calorie goal per day</summary>
       <div id="perDayGoalsContainer"></div>
     </details>
 
@@ -163,16 +171,42 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
   </div>
 </section>
 
+<section class="page" id="theme">
+  <div class="card">
+    <h3>Tab Colors</h3>
+    
+    <label style="font-weight:normal;display:block;margin-bottom:8px;">Tab Background Color:</label>
+    <div id="bgColorPalette" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+    <input type="text" id="tabBgColorInput" placeholder="#00FF7F" style="margin-bottom:12px;font-family:monospace;">
+    
+    <label style="font-weight:normal;display:block;margin-bottom:8px;">Tab Text Color:</label>
+    <div id="textColorPalette" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+    <input type="text" id="tabTextColorInput" placeholder="#121212" style="margin-bottom:12px;font-family:monospace;">
+    
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button id="saveThemeBtn" class="primary-btn">Save Colors</button>
+      <button id="resetThemeBtn" class="danger-btn">Reset Colors</button>
+    </div>
+  </div>
+</section>
+
 <section class="page" id="dailyMacros">
   <div class="card">
+    <h3>Weekly Progress</h3>
+    <div class="progress-container weekly">
+      <div id="weeklyProgressDaily" class="progress-bar"></div>
+    </div>
+    <div id="weeklyRemainingDaily" class="remaining"></div>
+  </div>
+  <div class="card">
     <h3>Daily Macros</h3>
-    <label>Day:</label>
+    <label>Add Whole Day:</label>
     <select id="day"></select>
     <input type="number" id="dailyCalories" placeholder="Calories (kcal)">
     <input type="number" id="protein" placeholder="Protein (g)">
     <input type="number" id="carbs" placeholder="Carbs (g)">
     <input type="number" id="fat" placeholder="Fat (g)">
-    <button id="saveDayBtn" class="primary-btn">Save Day</button>
+    <button id="saveDayBtn" class="primary-btn">Save</button>
     <button id="clearEntryBtn" class="danger-btn">Clear</button>
 
     <!-- Water input -->
@@ -182,6 +216,31 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
       <button id="addWaterBtn" class="water-btn">Add Water</button>
       <button id="clearDayWaterBtn" class="danger-btn">Empty Water</button>
     </div>
+        
+        <!-- Food entry input -->
+        <div style="margin-top:12px;">
+          <h4 style="margin:6px 0 8px 0;">Add Food</h4>
+          <input type="text" id="foodName" placeholder="Food name (e.g., Chicken Breast)" style="margin-top:6px;">
+          <input type="number" id="foodCal" placeholder="Calories (kcal)" style="margin-top:6px;">
+          <input type="number" id="foodProtein" placeholder="Protein (g)" style="margin-top:6px;">
+          <input type="number" id="foodCarbs" placeholder="Carbs (g)" style="margin-top:6px;">
+          <input type="number" id="foodFat" placeholder="Fat (g)" style="margin-top:6px;">
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+            <button type="button" id="addFoodBtn" class="primary-btn">Add Food</button>
+            <button type="button" id="clearFoodsBtn" class="danger-btn">Clear Entry</button>
+            <button type="button" id="saveFoodBtn" class="primary-btn">Save Food</button>
+          </div>
+          <div id="foodEntriesList" style="margin-top:10px;"></div>
+          <div id="savedFoodsSection" style="margin-top:16px;">
+            <h4 style="margin:8px 0 6px 0;">Saved Foods</h4>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+              <button type="button" id="loadSavedFoodBtn" class="primary-btn">Load</button>
+              <button type="button" id="addSavedFoodEntryBtn" class="primary-btn">Add Saved</button>
+            </div>
+            <div id="savedFoodsList" style="margin-top:10px;"></div>
+            <div class="helper-text" style="margin-top:8px;">Load a saved food with one click, or add it directly to today's day log.</div>
+          </div>
+        </div>
   </div>
 </section>
 
@@ -197,12 +256,130 @@ let personalDailyProteinGoal = parseInt(localStorage.getItem("personalDailyProte
 let personalDailyWaterGoal = parseFloat(localStorage.getItem("personalDailyWaterGoal")) || 64; // oz
 let autoAdjustCalorieBudget = JSON.parse(localStorage.getItem("autoAdjustCalorieBudget") ?? "true");
 let perDayCalGoals = JSON.parse(localStorage.getItem("perDayCalGoals")) || {};
+let savedFoods = JSON.parse(localStorage.getItem("savedFoods") || "[]");
 // if a previous value was stored in ml (large number), convert to oz
 if(personalDailyWaterGoal > 1000){
   const ML_PER_OZ = 29.5735;
   personalDailyWaterGoal = personalDailyWaterGoal / ML_PER_OZ;
   localStorage.setItem("personalDailyWaterGoal", personalDailyWaterGoal);
 }
+
+// Tab colors
+const defaultTabColors = {
+  bg: '#00FF7F',
+  text: '#121212'
+};
+let storedTabColors = JSON.parse(localStorage.getItem('tabColors')||'{}');
+let tabColors = Object.assign({}, defaultTabColors, storedTabColors);
+
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if(hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  const num = parseInt(hex,16);
+  return {
+    r: (num >> 16) & 255,
+    g: (num >> 8) & 255,
+    b: num & 255
+  };
+}
+
+function rgbToHex({r,g,b}){
+  const toHex = n => n.toString(16).padStart(2,'0');
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function darkenColor(hex, amount = 0.2){
+  const rgb = hexToRgb(hex);
+  const curve = value => Math.max(0, Math.round(value * (1 - amount)));
+  return rgbToHex({
+    r: curve(rgb.r),
+    g: curve(rgb.g),
+    b: curve(rgb.b)
+  });
+}
+
+function applyTabColors(colors){
+  const root = document.documentElement;
+  root.style.setProperty('--tab-bg', colors.bg);
+  root.style.setProperty('--tab-text', colors.text);
+  root.style.setProperty('--tab-active', darkenColor(colors.bg, 0.18));
+}
+
+function initTabColorUI(){
+  const bgI = document.getElementById('tabBgColorInput');
+  const textI = document.getElementById('tabTextColorInput');
+  const bgPalette = document.getElementById('bgColorPalette');
+  const textPalette = document.getElementById('textColorPalette');
+  
+  if(bgI) bgI.value = tabColors.bg;
+  if(textI) textI.value = tabColors.text;
+
+  // Background color palette
+  const bgColors = ['#000000','#FFFFFF','FFFFFF', '#00FF7F','#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#F38181', '#AA96DA', '#FCBAD3', '#A8D8EA', '#FF9999', '#45B7D1', '#2ECC71', '#E74C3C', '#F39C12', '#9B59B6', '#002147', '#3498DB', '#E67E22', '#16A085', '#D35400', '#C0392B', '#8E44AD', '#27AE60', '#2980B9', '#F1C40F', '#0D47A1', '#1565C0', '#1976D2', '#4A148C', '#6A1B9A', '#7B1FA2','#051D01','#063204', '#1B5E20', '#2E7D32', '#388E3C','#3C1414', '#B71C1C', '#C62828', '#D32F2F', '#E65100', '#F57C00', '#FB8C00', '#00695C', '#004D40', '#263238', '#37474F', '#455A64', '#546E7A'];
+  if(bgPalette){
+    bgPalette.innerHTML = bgColors.map(color => `
+      <button type="button" style="width:40px;height:40px;background:${color};border:2px solid ${color===tabColors.bg?'#fff':'transparent'};border-radius:6px;cursor:pointer;transition:0.2s;" data-color="${color}" class="bg-color-btn"></button>
+    `).join('');
+    bgPalette.querySelectorAll('.bg-color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        bgI.value = btn.dataset.color;
+        bgPalette.querySelectorAll('.bg-color-btn').forEach(b => b.style.borderColor = b===btn?'#fff':'transparent');
+      });
+    });
+  }
+
+  // Text color palette
+  const textColors = ['#121212', '#FFFFFF', '#333333', '#E0E0E0', '#000000', '#F5F5F5'];
+  if(textPalette){
+    textPalette.innerHTML = textColors.map(color => `
+      <button type="button" style="width:40px;height:40px;background:${color};border:2px solid ${color===tabColors.text?'#FFD700':'#555'};border-radius:6px;cursor:pointer;transition:0.2s;" data-color="${color}" class="text-color-btn"></button>
+    `).join('');
+    textPalette.querySelectorAll('.text-color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        textI.value = btn.dataset.color;
+        textPalette.querySelectorAll('.text-color-btn').forEach(b => b.style.borderColor = b===btn?'#FFD700':'#555');
+      });
+    });
+  }
+
+  const saveBtn = document.getElementById('saveThemeBtn');
+  const resetBtn = document.getElementById('resetThemeBtn');
+  if(saveBtn){
+    saveBtn.addEventListener('click', ()=>{
+      tabColors = {
+        bg: bgI.value || defaultTabColors.bg,
+        text: textI.value || defaultTabColors.text
+      };
+      applyTabColors(tabColors);
+      localStorage.setItem('tabColors', JSON.stringify(tabColors));
+      initTabColorUI();
+    });
+  }
+  if(resetBtn){
+    resetBtn.addEventListener('click', ()=>{
+      if(!confirm('Reset tab colors to defaults?')) return;
+      tabColors = Object.assign({}, defaultTabColors);
+      applyTabColors(tabColors);
+      localStorage.removeItem('tabColors');
+      initTabColorUI();
+    });
+  }
+
+  // Update palette border when text input changes
+  if(bgI) bgI.addEventListener('input', () => {
+    if(bgPalette) bgPalette.querySelectorAll('.bg-color-btn').forEach(btn => {
+      btn.style.borderColor = btn.dataset.color===bgI.value?'#fff':'transparent';
+    });
+  });
+  if(textI) textI.addEventListener('input', () => {
+    if(textPalette) textPalette.querySelectorAll('.text-color-btn').forEach(btn => {
+      btn.style.borderColor = btn.dataset.color===textI.value?'#FFD700':'#555';
+    });
+  });
+}
+
+// apply tab colors on load
+applyTabColors(tabColors);
 
 // Returns the effective calorie goal for a given day index (0=Sun … 6=Sat).
 // Uses a per-day override if set, otherwise falls back to the global daily goal.
@@ -263,8 +440,20 @@ function getDayTotals(day){
 function normalizeWeekData(week){
   if(!week || !Array.isArray(week.entries)) return;
   week.entries = week.entries.map(day => {
-    const totals = getDayTotals(day);
-    return {totals, water: Number(day.water) || 0};
+    // Support both old shape ({totals, water}) and new shape ({entries: [...] , water})
+    if(Array.isArray(day.entries)){
+      const totals = getDayTotals(day);
+      return {entries: day.entries.slice(), totals, water: Number(day.water) || 0};
+    }
+    if(day.totals){
+      return {entries: [], totals: {
+        cal: Number(day.totals.cal) || 0,
+        p: Number(day.totals.p) || 0,
+        c: Number(day.totals.c) || 0,
+        f: Number(day.totals.f) || 0,
+      }, water: Number(day.water) || 0};
+    }
+    return {entries: [], totals: {cal:0,p:0,c:0,f:0}, water: Number(day.water) || 0};
   });
 }
 
@@ -281,10 +470,12 @@ let data = allWeeks[currentWeekKey].entries;
 function populateDays(){
   const daySelect = document.getElementById("day");
   daySelect.innerHTML = "";
-  // populate using reversed display order (Saturday first, Sunday last)
-  displayDayOrder.forEach(i=>{
+  // Populate starting with Sunday (0) through Saturday (6)
+  for(let i = 0; i < 7; i++){
     daySelect.innerHTML += `<option value="${i}">${dayNames[i]}</option>`;
-  });
+  }
+  // default to Sunday
+  daySelect.value = 0;
 }
 populateDays();
 
@@ -296,6 +487,7 @@ function save(){
   localStorage.setItem("personalDailyWaterGoal", personalDailyWaterGoal);
   localStorage.setItem("autoAdjustCalorieBudget", JSON.stringify(autoAdjustCalorieBudget));
   localStorage.setItem("perDayCalGoals", JSON.stringify(perDayCalGoals));
+  localStorage.setItem('tabColors', JSON.stringify(tabColors));
   renderWeekHistory();
 }
 
@@ -454,6 +646,8 @@ function renderPerDayGoalInputs(){
   });
 }
 renderPerDayGoalInputs();
+initTabColorUI();
+renderSavedFoods();
 
 function clearEntryInputs(){
   document.getElementById("dailyCalories").value = "";
@@ -470,6 +664,7 @@ function populateDayInputs(){
   document.getElementById("protein").value = totals.p || "";
   document.getElementById("carbs").value = totals.c || "";
   document.getElementById("fat").value = totals.f || "";
+  renderFoodListForSelectedDay();
 }
 
 document.getElementById("day").addEventListener("change", populateDayInputs);
@@ -481,6 +676,8 @@ function saveDayTotals(){
   const p = +document.getElementById("protein").value || 0;
   const c = +document.getElementById("carbs").value || 0;
   const f = +document.getElementById("fat").value || 0;
+  // Manual totals act as an override — clear any individual food entries
+  data[day].entries = [];
   data[day].totals = {cal,p,c,f};
   save();
   populateDayInputs();
@@ -507,6 +704,222 @@ document.getElementById("clearDayWaterBtn").addEventListener("click", () => {
     data[day].water = 0;
     save();
   }
+});
+
+// Food entry helpers
+function renderSavedFoodOptions(){
+  const select = document.getElementById('savedFoodSelect');
+  if(!select) return;
+  select.innerHTML = `<option value="">Select saved food</option>`;
+  savedFoods.forEach((food, index) => {
+    const label = `${food.name} — ${food.cal} kcal | ${food.p} g protein | ${food.c} g carbs | ${food.f} g fat`;
+    select.innerHTML += `<option value="${index}">${label}</option>`;
+  });
+}
+
+function renderSavedFoods(){
+  renderSavedFoodOptions();
+  const savedContainer = document.getElementById("savedFoodsList");
+  if(!savedContainer) return;
+  savedContainer.innerHTML = "";
+  // reset any in-progress edit state when re-rendering
+  if (typeof editingSavedIndex !== 'undefined' && editingSavedIndex !== null) {
+    editingSavedIndex = null;
+    const saveBtnReset = document.getElementById('saveFoodBtn');
+    if (saveBtnReset) saveBtnReset.textContent = 'Save Food';
+  }
+  if(!savedFoods.length){
+    savedContainer.innerHTML = `<div class="entry-row" style="justify-content:space-between;color:#aaa;">No saved foods yet.</div>`;
+    return;
+  }
+  savedFoods.forEach((food,index) => {
+    const row = document.createElement('div');
+    row.className = 'entry-row';
+    row.innerHTML = `<span style="flex:1;">${food.name} — ${food.cal} kcal | ${food.p} g protein | ${food.c} g carbs | ${food.f} g fat</span>`;
+    const useBtn = document.createElement('button');
+    useBtn.className = 'primary-btn';
+    useBtn.textContent = 'Use';
+    useBtn.style.marginLeft = '8px';
+    useBtn.addEventListener('click', () => {
+      document.getElementById('foodName').value = food.name;
+      document.getElementById('foodCal').value = food.cal;
+      document.getElementById('foodProtein').value = food.p;
+      document.getElementById('foodCarbs').value = food.c;
+      document.getElementById('foodFat').value = food.f;
+    });
+    const editBtn = document.createElement('button');
+    editBtn.className = 'primary-btn';
+    editBtn.textContent = 'Edit';
+    editBtn.style.marginLeft = '8px';
+    editBtn.addEventListener('click', () => {
+      document.getElementById('foodName').value = food.name;
+      document.getElementById('foodCal').value = food.cal;
+      document.getElementById('foodProtein').value = food.p;
+      document.getElementById('foodCarbs').value = food.c;
+      document.getElementById('foodFat').value = food.f;
+      editingSavedIndex = index;
+      const saveBtn = document.getElementById('saveFoodBtn');
+      if(saveBtn) saveBtn.textContent = 'Save Changes'; 
+      // focus the name field for quick edit
+      const nameField = document.getElementById('foodName');
+      if(nameField) nameField.focus();
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'danger-btn';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.style.marginLeft = '8px';
+    deleteBtn.addEventListener('click', () => {
+      savedFoods.splice(index,1);
+      localStorage.setItem('savedFoods', JSON.stringify(savedFoods));
+      renderSavedFoods();
+    });
+    row.appendChild(useBtn);
+    row.appendChild(editBtn);
+    row.appendChild(deleteBtn);
+    savedContainer.appendChild(row);
+  });
+}
+
+function loadSelectedSavedFood(){
+  const select = document.getElementById('savedFoodSelect');
+  if(!select) return;
+  const index = Number(select.value);
+  if(isNaN(index) || index < 0 || index >= savedFoods.length) return;
+  const food = savedFoods[index];
+  document.getElementById('foodName').value = food.name;
+  document.getElementById('foodCal').value = food.cal;
+  document.getElementById('foodProtein').value = food.p;
+  document.getElementById('foodCarbs').value = food.c;
+  document.getElementById('foodFat').value = food.f;
+}
+
+function addSelectedSavedFood(){
+  const select = document.getElementById('savedFoodSelect');
+  if(!select) return;
+  const index = Number(select.value);
+  if(isNaN(index) || index < 0 || index >= savedFoods.length) return;
+  const food = savedFoods[index];
+  const day = +document.getElementById('day').value;
+  data[day].entries = data[day].entries || [];
+  data[day].entries.push({ ...food });
+  data[day].totals = getDayTotals({entries: data[day].entries});
+  save();
+  populateDayInputs();
+}
+
+function saveFoodTemplate(){
+  const name = document.getElementById('foodName').value.trim();
+  const cal = +document.getElementById('foodCal').value || 0;
+  const p = +document.getElementById('foodProtein').value || 0;
+  const c = +document.getElementById('foodCarbs').value || 0;
+  const f = +document.getElementById('foodFat').value || 0;
+  if(!name) return;
+  const foodItem = {name, cal, p, c, f};
+  // If we're editing a specific saved item, update that index.
+  if(typeof editingSavedIndex === 'number' && editingSavedIndex >= 0 && editingSavedIndex < savedFoods.length){
+    savedFoods[editingSavedIndex] = foodItem;
+    editingSavedIndex = null;
+    const saveBtnReset = document.getElementById('saveFoodBtn');
+    if (saveBtnReset) saveBtnReset.textContent = 'Save Food';
+  } else {
+    const existingIndex = savedFoods.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
+    if(existingIndex >= 0){
+      savedFoods[existingIndex] = foodItem;
+    } else {
+      savedFoods.push(foodItem);
+    }
+  }
+  localStorage.setItem('savedFoods', JSON.stringify(savedFoods));
+  renderSavedFoods();
+}
+
+function clearSavedFoods(){
+  if(!confirm('Clear all saved foods?')) return;
+  savedFoods = [];
+  localStorage.setItem('savedFoods', JSON.stringify(savedFoods));
+  renderSavedFoods();
+}
+
+function renderFoodListForSelectedDay(){
+  const day = +document.getElementById("day").value;
+  const container = document.getElementById("foodEntriesList");
+  if(!container) return;
+  container.innerHTML = "";
+  const entries = (data[day] && Array.isArray(data[day].entries)) ? data[day].entries : [];
+  
+  entries.forEach((e,i)=>{
+    const name = e.name || 'Food';
+    const cal = Number(e.cal)||0;
+    const p = Number(e.p)||0;
+    const c = Number(e.c)||0;
+    const f = Number(e.f)||0;
+    const row = document.createElement('div');
+    row.className = 'entry-row';
+    row.innerHTML = `<span>${name} — ${cal} kcal | ${p} g protein | ${c} g carbs | ${f} g fat</span>`;
+    const del = document.createElement('button');
+    del.className = 'danger-btn';
+    del.textContent = 'Delete';
+    del.style.marginLeft = '8px';
+    del.addEventListener('click', ()=> deleteFoodEntry(i));
+    row.appendChild(del);
+    container.appendChild(row);
+  });
+}
+
+function addFoodEntry(){
+  const day = +document.getElementById("day").value;
+  const name = document.getElementById("foodName").value.trim();
+  const cal = +document.getElementById("foodCal").value || 0;
+  const p = +document.getElementById("foodProtein").value || 0;
+  const c = +document.getElementById("foodCarbs").value || 0;
+  const f = +document.getElementById("foodFat").value || 0;
+  if(!name && cal <= 0) return; // nothing to add
+  data[day].entries = data[day].entries || [];
+  data[day].entries.push({name, cal, p, c, f});
+  // recompute totals from entries
+  const totals = getDayTotals({entries: data[day].entries});
+  data[day].totals = totals;
+  // clear inputs
+  document.getElementById("foodName").value = '';
+  document.getElementById("foodCal").value = '';
+  document.getElementById("foodProtein").value = '';
+  document.getElementById("foodCarbs").value = '';
+  document.getElementById("foodFat").value = '';
+  save();
+  populateDayInputs();
+}
+
+function deleteFoodEntry(index){
+  const day = +document.getElementById("day").value;
+  if(!Array.isArray(data[day].entries)) return;
+  data[day].entries.splice(index,1);
+  // recompute totals
+  data[day].totals = getDayTotals({entries: data[day].entries});
+  save();
+  populateDayInputs();
+}
+
+function deleteCurrentWeekEntry(dayIdx, entryIndex){
+  if(!Array.isArray(data[dayIdx].entries)) return;
+  data[dayIdx].entries.splice(entryIndex, 1);
+  data[dayIdx].totals = getDayTotals({entries: data[dayIdx].entries});
+  save();
+  populateDayInputs();
+  renderWeekHistory();
+}
+
+document.getElementById('addFoodBtn').addEventListener('click', (e) => { e.preventDefault(); addFoodEntry(); });
+document.getElementById('saveFoodBtn').addEventListener('click', (e) => { e.preventDefault(); saveFoodTemplate(); });
+document.getElementById('loadSavedFoodBtn').addEventListener('click', (e) => { e.preventDefault(); loadSelectedSavedFood(); });
+document.getElementById('addSavedFoodEntryBtn').addEventListener('click', (e) => { e.preventDefault(); addSelectedSavedFood(); });
+document.getElementById('clearFoodsBtn').addEventListener('click', (e) => { e.preventDefault();
+  // Only clear the food entry input boxes (do not modify stored entries)
+  document.getElementById("foodName").value = '';
+  document.getElementById("foodCal").value = '';
+  document.getElementById("foodProtein").value = '';
+  document.getElementById("foodCarbs").value = '';
+  document.getElementById("foodFat").value = '';
 });
 
 // Reset Button
@@ -617,6 +1030,15 @@ function renderWeekHistory(){
           <div class="day-entries" style="display:block;">
             <div class="entry-row"><span>Protein: ${proteinTotal} g | Carbs: ${carbsTotal} g | Fat: ${fatTotal} g</span></div>
             <div class="entry-row"><span>Water: ${Math.round(waterOz)} oz</span></div>
+            ${Array.isArray(dayData.entries) && dayData.entries.length ? (`<div style="margin-top:8px;">` + dayData.entries.map((e,entryIdx)=>{
+              const name = e.name || 'Food';
+              const cal = Number(e.cal)||0;
+              const p = Number(e.p)||0;
+              const c = Number(e.c)||0;
+              const f = Number(e.f)||0;
+              const deleteButton = isCurrent ? `<button class="danger-btn delete-week-entry-btn" data-day="${dayIdx}" data-entry="${entryIdx}" style="margin-left:8px;min-height:20px;">Delete</button>` : '';
+              return `<div class="entry-row"><span>${name} — ${cal} kcal | ${p} g protein | ${c} g carbs | ${f} g fat</span>${deleteButton}</div>`;
+            }).join('') + `</div>`) : ''}
           </div>
         </div>
       </div>`;
@@ -650,6 +1072,7 @@ function renderWeekHistory(){
     const toggleBtnHTML = !isCurrent
       ? `<button class="primary-btn toggle-week-btn" style="margin-left:8px;">${isCollapsed ? "Show" : "Hide"}</button>`
       : "";
+    const editBtnHTML = !isCurrent ? `<button class="primary-btn edit-week-btn" style="margin-left:8px;">Edit Week</button>` : "";
 
     const toggleAllDaysHTML = `<button class="primary-btn toggle-all-days-btn" style="margin-left:8px;">Hide All</button>`;
 
@@ -658,7 +1081,8 @@ function renderWeekHistory(){
         <strong class="week-heading">${weekLabel}</strong>
         <div style="display:flex; align-items:center; gap:8px;">
           ${weightHTML}
-          ${toggleBtnHTML}
+            ${toggleBtnHTML}
+            ${editBtnHTML}
           ${toggleAllDaysHTML}
         </div>
       </div>
@@ -676,6 +1100,24 @@ function renderWeekHistory(){
       previousWeeksContainer.appendChild(card);
     }
 
+    // allow editing this previous week (make it the active week)
+    const editWeekBtn = card.querySelector('.edit-week-btn');
+    if(editWeekBtn){
+      editWeekBtn.addEventListener('click', ()=>{
+        if(!confirm('Make this week the active week for editing?')) return;
+        currentWeekKey = weekKey;
+        data = allWeeks[currentWeekKey].entries;
+        // update week-start weight input to reflect selected week
+        weekWeightInput.value = allWeeks[currentWeekKey].startingWeight || '';
+        populateDays();
+        populateDayInputs();
+        renderWeekHistory();
+        // navigate to daily macros for editing
+        window.location.hash = 'dailyMacros';
+        showPageFromHash();
+      });
+    }
+
     // allow toggling previous week details
     if (!isCurrent) {
       const toggleBtn = card.querySelector(".toggle-week-btn");
@@ -688,6 +1130,15 @@ function renderWeekHistory(){
         });
       }
     }
+
+    // allow deleting current week entries from the week card
+    card.querySelectorAll('.delete-week-entry-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dayIdx = Number(btn.dataset.day);
+        const entryIndex = Number(btn.dataset.entry);
+        deleteCurrentWeekEntry(dayIdx, entryIndex);
+      });
+    });
 
     // allow toggling each day independently
     const dayToggles = card.querySelectorAll(".toggle-day-btn");
@@ -718,6 +1169,8 @@ function renderWeekHistory(){
     // Weekly Calories Progress
     const progressEl=document.getElementById("weeklyProgress");
     const remainingEl=document.getElementById("weeklyRemaining");
+    const progressElDaily=document.getElementById("weeklyProgressDaily");
+    const remainingElDaily=document.getElementById("weeklyRemainingDaily");
     if (weekKey === currentWeekKey) {
       const weeklyTarget = getWeeklyCalTarget();
 
@@ -737,14 +1190,18 @@ function renderWeekHistory(){
 
       progressEl.style.width = percent + "%";
       progressEl.style.background = barColor;
+      if(progressElDaily) { progressElDaily.style.width = percent + "%"; progressElDaily.style.background = barColor; }
 
       if (weeklyTarget > 0) {
         const difference = Math.round(weeklyTarget - totalWeekCalories);
-        remainingEl.textContent = difference >= 0
+        const text = difference >= 0
           ? `Calories Remaining: ${difference} kcal`
           : `Calories Over: ${Math.abs(difference)} kcal`;
+        remainingEl.textContent = text;
+        if(remainingElDaily) remainingElDaily.textContent = text;
       } else {
         remainingEl.textContent = "Set a daily calorie goal";
+        if(remainingElDaily) remainingElDaily.textContent = "Set a daily calorie goal";
       }
     }
   });
@@ -776,10 +1233,12 @@ document.getElementById("toggleHistoryBtn").addEventListener("click", () => {
 
 function showPageFromHash(){
   const pages = document.querySelectorAll('.page');
-  const validPages = ['week', 'previousWeeks', 'setGoals', 'dailyMacros'];
+  const navLinks = document.querySelectorAll('.nav-link');
+  const validPages = ['week', 'previousWeeks', 'setGoals', 'dailyMacros', 'theme'];
   let pageId = window.location.hash.replace('#','') || 'week';
   if(!validPages.includes(pageId)) pageId = 'week';
   pages.forEach(page => page.classList.toggle('active', page.id === pageId));
+  navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${pageId}`));
   const target = document.getElementById(pageId);
   if(target){
     target.scrollIntoView({behavior:'smooth', block:'start'});
