@@ -108,6 +108,9 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
   .per-day-goals summary { font-size: 10px; }
   .per-day-goals-row label { font-size: 9px; }
   .per-day-goals-row input { font-size: 9px; }
+  .entry-row { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 4px; }
+  .entry-row span { flex-shrink: 1; min-width: 0; font-size: 11px; }
+  .entry-row button { margin-left: 0; padding: 2px 4px; font-size: 9px; min-height: 16px; }
 }
 </style>
 </head>
@@ -198,6 +201,10 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
     </div>
     <div id="weeklyRemainingDaily" class="remaining"></div>
   </div>
+  <div class="card" id="dailyProgressCard" style="display:none;">
+    <h3 id="dailyProgressHeading">Daily Progress</h3>
+    <div id="dailyProgressContent"></div>
+  </div>
   <div class="card">
     <h3>Daily Macros</h3>
     <label>Add Whole Day:</label>
@@ -216,7 +223,6 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
       <button id="addWaterBtn" class="water-btn">Add Water</button>
       <button id="clearDayWaterBtn" class="danger-btn">Empty Water</button>
     </div>
-        
         <!-- Food entry input -->
         <div style="margin-top:12px;">
           <h4 style="margin:6px 0 8px 0;">Add Food</h4>
@@ -225,21 +231,27 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
           <input type="number" id="foodProtein" placeholder="Protein (g)" style="margin-top:6px;">
           <input type="number" id="foodCarbs" placeholder="Carbs (g)" style="margin-top:6px;">
           <input type="number" id="foodFat" placeholder="Fat (g)" style="margin-top:6px;">
+          <input type="number" id="foodQuantity" placeholder="Quantity" value="1" min="0.1" step="0.1" style="margin-top:6px;">
             <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
             <button type="button" id="addFoodBtn" class="primary-btn">Add Food</button>
             <button type="button" id="clearFoodsBtn" class="danger-btn">Clear Entry</button>
             <button type="button" id="saveFoodBtn" class="primary-btn">Save Food</button>
           </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+            <h4 style="margin:0;">Food Entries</h4>
+            <button type="button" id="toggleFoodListBtn" class="primary-btn" style="font-size:11px;padding:3px 6px;">Hide</button>
+          </div>
           <div id="foodEntriesList" style="margin-top:10px;"></div>
           <div id="savedFoodsSection" style="margin-top:16px;">
-            <h4 style="margin:8px 0 6px 0;">Saved Foods</h4>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <h4 style="margin:8px 0 6px 0;">Saved Foods</h4>
+              <button type="button" id="toggleSavedFoodListBtn" class="primary-btn" style="font-size:11px;padding:3px 6px;">Hide</button>
+            </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">
               <button type="button" id="loadSavedFoodBtn" class="primary-btn">Load</button>
               <button type="button" id="addSavedFoodEntryBtn" class="primary-btn">Add Saved</button>
             </div>
             <div id="savedFoodsList" style="margin-top:10px;"></div>
-            <div class="helper-text" style="margin-top:8px;">Load a saved food with one click, or add it directly to today's day log.</div>
-          </div>
         </div>
   </div>
 </section>
@@ -427,10 +439,11 @@ function getDayTotals(day){
   }
   if(Array.isArray(day.entries)){
     return day.entries.reduce((sum, entry) => {
-      sum.cal += Number(entry.cal) || 0;
-      sum.p += Number(entry.p) || 0;
-      sum.c += Number(entry.c) || 0;
-      sum.f += Number(entry.f) || 0;
+      const qty = Number(entry.qty) || 1;
+      sum.cal += (Number(entry.cal) || 0) * qty;
+      sum.p += (Number(entry.p) || 0) * qty;
+      sum.c += (Number(entry.c) || 0) * qty;
+      sum.f += (Number(entry.f) || 0) * qty;
       return sum;
     }, {cal:0,p:0,c:0,f:0});
   }
@@ -459,7 +472,7 @@ function normalizeWeekData(week){
 
 if(!allWeeks[currentWeekKey]){
   allWeeks[currentWeekKey] = {
-    entries: dayNames.map(()=>({totals:{cal:0,p:0,c:0,f:0}, water:0 })),
+    entries: dayNames.map(()=>({entries: [], totals:{cal:0,p:0,c:0,f:0}, water:0 })),
     startingWeight: null,
   };
 }
@@ -474,8 +487,9 @@ function populateDays(){
   for(let i = 0; i < 7; i++){
     daySelect.innerHTML += `<option value="${i}">${dayNames[i]}</option>`;
   }
-  // default to Sunday
-  daySelect.value = 0;
+  // default to current day of the week
+  const currentDay = new Date().getDay();
+  daySelect.value = currentDay;
 }
 populateDays();
 
@@ -665,10 +679,88 @@ function populateDayInputs(){
   document.getElementById("carbs").value = totals.c || "";
   document.getElementById("fat").value = totals.f || "";
   renderFoodListForSelectedDay();
+  
+  // Update daily progress bar
+  const dailyGoal = getEffectiveDailyCalGoal(day);
+  const dailyProtGoal = personalDailyProteinGoal;
+  const dailyWaterGoal = personalDailyWaterGoal;
+  const waterOz = data[day].water ? (data[day].water / 29.5735) : 0;
+  
+  let calPercent = dailyGoal > 0 ? Math.min((totals.cal / dailyGoal) * 100, 150) : 0;
+  let calColor = calPercent < 90 ? "#00FF7F" : calPercent <= 100 ? "#FFD700" : "#FF4C4C";
+  
+  let protPercent = dailyProtGoal > 0 ? (totals.p / dailyProtGoal) * 100 : 0;
+  protPercent = Math.min(protPercent, 150);
+  let protColor = protPercent < 90 ? "#00FF7F" : protPercent <= 100 ? "#FFD700" : "#FF4C4C";
+  
+  let waterPercent = dailyWaterGoal > 0 ? Math.min((waterOz / dailyWaterGoal) * 100, 100) : 0;
+  let waterColor = waterPercent < 80 ? "#00BFFF" : waterPercent < 100 ? "#1E90FF" : "#0000CD";
+  
+  const dailyCard = document.getElementById("dailyProgressCard");
+  const dailyContent = document.getElementById("dailyProgressContent");
+  if(dailyCard && dailyContent){
+    dailyCard.style.display = "block";
+    document.getElementById("dailyProgressHeading").textContent = `Daily Progress — ${dayNames[day]}`;
+    dailyContent.innerHTML = `
+      <div class="side-bars">
+        <div class="bar-group">
+          <div class="progress-container daily">
+            <div class="progress-bar" style="width:${calPercent}%; background:${calColor};"></div>
+          </div>
+          <div class="side-label">Calories: ${Math.round(totals.cal)}/${Math.round(dailyGoal)} kcal</div>
+        </div>
+        <div class="bar-group">
+          <div class="progress-container daily">
+            <div class="progress-bar" style="width:${protPercent}%; background:${protColor};"></div>
+          </div>
+          <div class="side-label">Protein: ${Math.round(totals.p)}/${dailyProtGoal} g</div>
+        </div>
+        <div class="bar-group">
+          <div class="progress-container daily">
+            <div class="progress-bar" style="width:${waterPercent}%; background:${waterColor};"></div>
+          </div>
+          <div class="side-label">Water: ${Math.round(waterOz)}/${dailyWaterGoal} oz</div>
+        </div>
+      </div>
+      <div class="entry-row" style="margin-top:8px;"><span>Carbs: ${Math.round(totals.c)} g | Fat: ${Math.round(totals.f)} g</span></div>
+    `;
+  }
 }
 
 document.getElementById("day").addEventListener("change", populateDayInputs);
 populateDayInputs();
+
+function autoDistributeLeftoverCalories(dayIdx){
+  const dailyGoal = getEffectiveDailyCalGoal(dayIdx);
+  const dayTotals = getDayTotals(data[dayIdx]);
+  const leftover = Math.max(0, dailyGoal - dayTotals.cal);
+  
+  if(leftover <= 0) return; // No leftover to distribute
+  
+  // Count remaining days after this day
+  const remainingDays = 6 - dayIdx;
+  if(remainingDays <= 0) return; // No future days to distribute to
+  
+  // Distribute leftover evenly across remaining days
+  const calPerDay = leftover / remainingDays;
+  
+  // If current day has calories, calculate macro ratios to maintain proportions
+  let proteinRatio = 0, carbsRatio = 0, fatRatio = 0;
+  if(dayTotals.cal > 0){
+    proteinRatio = dayTotals.p / dayTotals.cal;
+    carbsRatio = dayTotals.c / dayTotals.cal;
+    fatRatio = dayTotals.f / dayTotals.cal;
+  }
+  
+  // Distribute to each future day
+  for(let i = dayIdx + 1; i < 7; i++){
+    const currentDayTotals = getDayTotals(data[i]);
+    data[i].totals.cal = currentDayTotals.cal + calPerDay;
+    data[i].totals.p = currentDayTotals.p + (calPerDay * proteinRatio);
+    data[i].totals.c = currentDayTotals.c + (calPerDay * carbsRatio);
+    data[i].totals.f = currentDayTotals.f + (calPerDay * fatRatio);
+  }
+}
 
 function saveDayTotals(){
   const day = +document.getElementById("day").value;
@@ -679,6 +771,10 @@ function saveDayTotals(){
   // Manual totals act as an override — clear any individual food entries
   data[day].entries = [];
   data[day].totals = {cal,p,c,f};
+  
+  // Automatically distribute leftover calories to future days
+  autoDistributeLeftoverCalories(day);
+  
   save();
   populateDayInputs();
 }
@@ -848,23 +944,52 @@ function renderFoodListForSelectedDay(){
   container.innerHTML = "";
   const entries = (data[day] && Array.isArray(data[day].entries)) ? data[day].entries : [];
   
+  if(entries.length === 0){
+    container.innerHTML = `<div style="color:#aaa;font-size:12px;">No food entries yet.</div>`;
+    return;
+  }
+  
   entries.forEach((e,i)=>{
     const name = e.name || 'Food';
     const cal = Number(e.cal)||0;
     const p = Number(e.p)||0;
     const c = Number(e.c)||0;
     const f = Number(e.f)||0;
+    const qty = Number(e.qty) || 1;
     const row = document.createElement('div');
     row.className = 'entry-row';
-    row.innerHTML = `<span>${name} — ${cal} kcal | ${p} g protein | ${c} g carbs | ${f} g fat</span>`;
+    const qtyDisplay = qty !== 1 ? ` × ${qty}` : '';
+    row.innerHTML = `<span>${name}${qtyDisplay} — ${(cal * qty).toFixed(0)} kcal | ${(p * qty).toFixed(1)} g protein | ${(c * qty).toFixed(1)} g carbs | ${(f * qty).toFixed(1)} g fat</span>`;
+    const editBtn = document.createElement('button');
+    editBtn.className = 'primary-btn';
+    editBtn.textContent = 'Edit';
+    editBtn.style.marginLeft = '4px';
+    editBtn.addEventListener('click', ()=> {
+      editFoodEntry(i);
+    });
     const del = document.createElement('button');
     del.className = 'danger-btn';
     del.textContent = 'Delete';
-    del.style.marginLeft = '8px';
+    del.style.marginLeft = '4px';
     del.addEventListener('click', ()=> deleteFoodEntry(i));
+    row.appendChild(editBtn);
     row.appendChild(del);
     container.appendChild(row);
   });
+}
+
+function editFoodEntry(index){
+  const day = +document.getElementById("day").value;
+  if(!Array.isArray(data[day].entries) || index < 0 || index >= data[day].entries.length) return;
+  const entry = data[day].entries[index];
+  document.getElementById("foodName").value = entry.name || '';
+  document.getElementById("foodCal").value = entry.cal || '';
+  document.getElementById("foodProtein").value = entry.p || '';
+  document.getElementById("foodCarbs").value = entry.c || '';
+  document.getElementById("foodFat").value = entry.f || '';
+  document.getElementById("foodQuantity").value = entry.qty || 1;
+  document.getElementById("addFoodBtn").dataset.editingIndex = index;
+  document.getElementById("addFoodBtn").textContent = 'Update Food';
 }
 
 function addFoodEntry(){
@@ -874,9 +999,23 @@ function addFoodEntry(){
   const p = +document.getElementById("foodProtein").value || 0;
   const c = +document.getElementById("foodCarbs").value || 0;
   const f = +document.getElementById("foodFat").value || 0;
+  const qty = +document.getElementById("foodQuantity").value || 1;
   if(!name && cal <= 0) return; // nothing to add
   data[day].entries = data[day].entries || [];
-  data[day].entries.push({name, cal, p, c, f});
+  
+  const addFoodBtn = document.getElementById("addFoodBtn");
+  const editingIndex = addFoodBtn.dataset.editingIndex;
+  
+  if(editingIndex !== undefined && editingIndex !== ''){
+    // Update existing entry
+    data[day].entries[editingIndex] = {name, cal, p, c, f, qty};
+    delete addFoodBtn.dataset.editingIndex;
+    addFoodBtn.textContent = 'Add Food';
+  } else {
+    // Add new entry
+    data[day].entries.push({name, cal, p, c, f, qty});
+  }
+  
   // recompute totals from entries
   const totals = getDayTotals({entries: data[day].entries});
   data[day].totals = totals;
@@ -886,6 +1025,7 @@ function addFoodEntry(){
   document.getElementById("foodProtein").value = '';
   document.getElementById("foodCarbs").value = '';
   document.getElementById("foodFat").value = '';
+  document.getElementById("foodQuantity").value = '1';
   save();
   populateDayInputs();
 }
@@ -908,6 +1048,24 @@ function deleteCurrentWeekEntry(dayIdx, entryIndex){
   populateDayInputs();
   renderWeekHistory();
 }
+
+document.getElementById('toggleFoodListBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  const foodList = document.getElementById('foodEntriesList');
+  const btn = document.getElementById('toggleFoodListBtn');
+  const isHidden = foodList.style.display === 'none';
+  foodList.style.display = isHidden ? 'block' : 'none';
+  btn.textContent = isHidden ? 'Hide' : 'Show';
+});
+
+document.getElementById('toggleSavedFoodListBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  const savedFoodsList = document.getElementById('savedFoodsList');
+  const btn = document.getElementById('toggleSavedFoodListBtn');
+  const isHidden = savedFoodsList.style.display === 'none';
+  savedFoodsList.style.display = isHidden ? 'block' : 'none';
+  btn.textContent = isHidden ? 'Hide' : 'Show';
+});
 
 document.getElementById('addFoodBtn').addEventListener('click', (e) => { e.preventDefault(); addFoodEntry(); });
 document.getElementById('saveFoodBtn').addEventListener('click', (e) => { e.preventDefault(); saveFoodTemplate(); });
@@ -1029,7 +1187,6 @@ function renderWeekHistory(){
           <br>
           <div class="day-entries" style="display:block;">
             <div class="entry-row"><span>Protein: ${proteinTotal} g | Carbs: ${carbsTotal} g | Fat: ${fatTotal} g</span></div>
-            <div class="entry-row"><span>Water: ${Math.round(waterOz)} oz</span></div>
             ${Array.isArray(dayData.entries) && dayData.entries.length ? (`<div style="margin-top:8px;">` + dayData.entries.map((e,entryIdx)=>{
               const name = e.name || 'Food';
               const cal = Number(e.cal)||0;
@@ -1067,7 +1224,7 @@ function renderWeekHistory(){
       </div>
       <div class="remaining">${weekRemainingText}</div>`;
 
-    const weightHTML = startingWeight ? `<span class="week-weight">Weigh In: ${startingWeight} lbs</span>` : "";
+    const weightHTML = startingWeight ? `<div style="background:#333;padding:6px 12px;border-radius:6px;font-size:12px;"><strong>Start Weight:</strong> ${startingWeight} lbs</div>` : "";
 
     const toggleBtnHTML = !isCurrent
       ? `<button class="primary-btn toggle-week-btn" style="margin-left:8px;">${isCollapsed ? "Show" : "Hide"}</button>`
