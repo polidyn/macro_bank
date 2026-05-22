@@ -730,38 +730,6 @@ function populateDayInputs(){
 document.getElementById("day").addEventListener("change", populateDayInputs);
 populateDayInputs();
 
-function autoDistributeLeftoverCalories(dayIdx){
-  const dailyGoal = getEffectiveDailyCalGoal(dayIdx);
-  const dayTotals = getDayTotals(data[dayIdx]);
-  const leftover = Math.max(0, dailyGoal - dayTotals.cal);
-  
-  if(leftover <= 0) return; // No leftover to distribute
-  
-  // Count remaining days after this day
-  const remainingDays = 6 - dayIdx;
-  if(remainingDays <= 0) return; // No future days to distribute to
-  
-  // Distribute leftover evenly across remaining days
-  const calPerDay = leftover / remainingDays;
-  
-  // If current day has calories, calculate macro ratios to maintain proportions
-  let proteinRatio = 0, carbsRatio = 0, fatRatio = 0;
-  if(dayTotals.cal > 0){
-    proteinRatio = dayTotals.p / dayTotals.cal;
-    carbsRatio = dayTotals.c / dayTotals.cal;
-    fatRatio = dayTotals.f / dayTotals.cal;
-  }
-  
-  // Distribute to each future day
-  for(let i = dayIdx + 1; i < 7; i++){
-    const currentDayTotals = getDayTotals(data[i]);
-    data[i].totals.cal = currentDayTotals.cal + calPerDay;
-    data[i].totals.p = currentDayTotals.p + (calPerDay * proteinRatio);
-    data[i].totals.c = currentDayTotals.c + (calPerDay * carbsRatio);
-    data[i].totals.f = currentDayTotals.f + (calPerDay * fatRatio);
-  }
-}
-
 function saveDayTotals(){
   const day = +document.getElementById("day").value;
   const cal = +document.getElementById("dailyCalories").value || 0;
@@ -771,9 +739,6 @@ function saveDayTotals(){
   // Manual totals act as an override — clear any individual food entries
   data[day].entries = [];
   data[day].totals = {cal,p,c,f};
-  
-  // Automatically distribute leftover calories to future days
-  autoDistributeLeftoverCalories(day);
   
   save();
   populateDayInputs();
