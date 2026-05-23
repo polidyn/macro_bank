@@ -674,10 +674,10 @@ function clearEntryInputs(){
 function populateDayInputs(){
   const day = +document.getElementById("day").value;
   const totals = getDayTotals(data[day]);
-  document.getElementById("dailyCalories").value = totals.cal || "";
-  document.getElementById("protein").value = totals.p || "";
-  document.getElementById("carbs").value = totals.c || "";
-  document.getElementById("fat").value = totals.f || "";
+  document.getElementById("dailyCalories").value = totals.cal ? Math.round(totals.cal) : "";
+  document.getElementById("protein").value = totals.p ? Math.round(totals.p) : "";
+  document.getElementById("carbs").value = totals.c ? Math.round(totals.c) : "";
+  document.getElementById("fat").value = totals.f ? Math.round(totals.f) : "";
   renderFoodListForSelectedDay();
   
   // Update daily progress bar
