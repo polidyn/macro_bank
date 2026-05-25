@@ -251,6 +251,7 @@ label{display:block;margin-top:clamp(6px, 1.5vw, 8px);font-weight:bold;}
               <button type="button" id="loadSavedFoodBtn" class="primary-btn">Load</button>
               <button type="button" id="addSavedFoodEntryBtn" class="primary-btn">Add Saved</button>
             </div>
+            <input type="search" id="savedFoodsSearch" placeholder="Search saved foods..." style="margin-top:12px;" autocomplete="off">
             <div id="savedFoodsList" style="margin-top:10px;"></div>
         </div>
   </div>
@@ -269,6 +270,7 @@ let personalDailyWaterGoal = parseFloat(localStorage.getItem("personalDailyWater
 let autoAdjustCalorieBudget = JSON.parse(localStorage.getItem("autoAdjustCalorieBudget") ?? "true");
 let perDayCalGoals = JSON.parse(localStorage.getItem("perDayCalGoals")) || {};
 let savedFoods = JSON.parse(localStorage.getItem("savedFoods") || "[]");
+let savedFoodSearchQuery = "";
 // if a previous value was stored in ml (large number), convert to oz
 if(personalDailyWaterGoal > 1000){
   const ML_PER_OZ = 29.5735;
@@ -793,10 +795,15 @@ function renderSavedFoods(){
     savedContainer.innerHTML = `<div class="entry-row" style="justify-content:space-between;color:#aaa;">No saved foods yet.</div>`;
     return;
   }
-  // Create sorted array with original indices
-  const sortedFoods = savedFoods
+  const filteredFoods = savedFoods
     .map((food, idx) => ({food, idx}))
-    .sort((a, b) => a.food.name.localeCompare(b.food.name));
+    .filter(item => item.food.name.toLowerCase().includes(savedFoodSearchQuery.toLowerCase()));
+  if(!filteredFoods.length){
+    savedContainer.innerHTML = `<div class="entry-row" style="justify-content:space-between;color:#aaa;">No saved foods match your search.</div>`;
+    return;
+  }
+  // Create sorted array with original indices
+  const sortedFoods = filteredFoods.sort((a, b) => a.food.name.localeCompare(b.food.name));
   
   sortedFoods.forEach(({food, idx: index}) => {
     const row = document.createElement('div');
@@ -1041,6 +1048,13 @@ document.getElementById('addFoodBtn').addEventListener('click', (e) => { e.preve
 document.getElementById('saveFoodBtn').addEventListener('click', (e) => { e.preventDefault(); saveFoodTemplate(); });
 document.getElementById('loadSavedFoodBtn').addEventListener('click', (e) => { e.preventDefault(); loadSelectedSavedFood(); });
 document.getElementById('addSavedFoodEntryBtn').addEventListener('click', (e) => { e.preventDefault(); addSelectedSavedFood(); });
+const savedFoodsSearchInput = document.getElementById('savedFoodsSearch');
+if(savedFoodsSearchInput){
+  savedFoodsSearchInput.addEventListener('input', () => {
+    savedFoodSearchQuery = savedFoodsSearchInput.value.trim();
+    renderSavedFoods();
+  });
+}
 document.getElementById('clearFoodsBtn').addEventListener('click', (e) => { e.preventDefault();
   // Only clear the food entry input boxes (do not modify stored entries)
   document.getElementById("foodName").value = '';
